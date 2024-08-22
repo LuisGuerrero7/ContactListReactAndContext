@@ -1,6 +1,9 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
+			contactList: [
+
+			],
 			demo: [
 				{
 					title: "FIRST",
@@ -19,6 +22,52 @@ const getState = ({ getStore, getActions, setStore }) => {
 			exampleFunction: () => {
 				getActions().changeColor(0, "green");
 			},
+
+			loadContacts: async () => {
+				const response = await fetch("https://playground.4geeks.com/contact/agendas/agendaLuis",{
+					method: "GET"
+				})
+				const data = await response.json();
+				setStore({contactList: data.contacts})
+			},
+
+			createContact: async (newContact) => {
+				console.log(newContact)
+				try {
+					const response = await fetch("https://playground.4geeks.com/contact/agendas/agendaLuis/contacts",{
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json"
+						},
+						body: JSON.stringify(newContact)
+					})
+					if(!response.ok){
+						throw new Error("There has been an error creating this contact, please check again") 
+					}
+					const data = await response.json();
+					setStore({ contactList: data.contacts });
+
+					getActions().loadContacts();
+				}
+				catch(error){
+					console.error("There has been an error creating this contact",error)
+				}
+			},
+
+
+			deleteContact: async () => {
+				const response = await fetch("https://playground.4geeks.com/contact/agendas/agendaLuis/contacts/{contacts_id}",{
+					method: "DELETE"
+				})
+				const data = await response.json();
+				setStore({contactList: data.contacts})
+				
+			},
+
+
+
+
+			
 			loadSomeData: () => {
 				/**
 					fetch().then().then(data => setStore({ "foo": data.bar }))
