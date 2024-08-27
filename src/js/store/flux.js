@@ -2,7 +2,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
 			contactList: [
-
 			],
 			demo: [
 				{
@@ -44,9 +43,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					if(!response.ok){
 						throw new Error("There has been an error creating this contact, please check again") 
 					}
-					const data = await response.json();
-					setStore({ contactList: data.contacts });
-
 					getActions().loadContacts();
 				}
 				catch(error){
@@ -55,24 +51,40 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 
 
-			deleteContact: async () => {
-				const response = await fetch("https://playground.4geeks.com/contact/agendas/agendaLuis/contacts/{contacts_id}",{
-					method: "DELETE"
+			deleteContact: async (id) => {
+				try {
+				const response = await fetch("https://playground.4geeks.com/contact/agendas/agendaLuis/contacts/" + id,{
+					method: "DELETE",
 				})
-				const data = await response.json();
-				setStore({contactList: data.contacts})
-				
+				if(!response.ok){
+					throw new Error("There has been an error creating this contact, please check again") 
+				}
+				getActions().loadContacts();
+				}
+				catch (error){
+					console.error("There has been an error deleting this contact",error)
+				}
 			},
 
-
-
-
-			
-			loadSomeData: () => {
-				/**
-					fetch().then().then(data => setStore({ "foo": data.bar }))
-				*/
+			updateContact: async (contact) => {
+				try{
+					const response = await fetch("https://playground.4geeks.com/contact/agendas/agendaLuis/contacts/" + contact.id,{
+						method: "PUT",
+						headers: {
+							"Content-Type": "application/json"
+						},
+						body: JSON.stringify(contact)
+					})
+					if (!response.ok){
+						throw new Error("There has been an error updating this contact, please check again")
+					}
+					getActions().loadContacts();
+				}
+				catch (error) {
+					console.log("There has been an error updating this contact",error)
+				}
 			},
+
 			changeColor: (index, color) => {
 				//get the store
 				const store = getStore();

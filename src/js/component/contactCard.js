@@ -1,6 +1,18 @@
-import React from "react";
+import React, { useContext , useState } from "react";
+import { Context } from "../store/appContext";
+import { Link } from "react-router-dom";
 
-const ContactCard = ({ fullName, address, phone, email}) => {
+const ContactCard = ({ fullName, address, phone, email,id}) => {
+
+    const {actions} = useContext(Context);
+
+    const [contactToEdit,setContactToEdit] = useState(
+        fullName,address,
+    ) 
+
+    const handleDelete = (id) => {
+        actions.deleteContact(id);
+    }
 
     return (
 
@@ -17,12 +29,16 @@ const ContactCard = ({ fullName, address, phone, email}) => {
                 <div >{email}</div>
             </div>
             <div className="col-1">
+                
                 <i className="fa-solid fa-pencil"></i>
-                Edit
+                <Link to={`/edit-contact/` + id}>
+                    Edit
+                </Link>
             </div>
             <div className="col-1">
-                <i className="fa-solid fa-trash-can"></i>
-                Eliminate
+                <button onClick={()=> {handleDelete(id)}}>
+                   X
+                </button>
             </div>
         </div>
     )

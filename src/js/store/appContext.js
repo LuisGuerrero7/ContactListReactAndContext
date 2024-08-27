@@ -21,8 +21,9 @@ const injectContext = PassedComponent => {
 			})
 		);
 
-		useEffect(() => {
+		useEffect(() => { 
 			state.actions.loadContacts();
+
 			//state.actions.createContact();
 			/**
 			 * EDIT THIS!

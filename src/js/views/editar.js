@@ -1,11 +1,12 @@
-import React, { useContext } from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import React, { useContext, useEffect } from "react";
+import { Link, Navigate, useNavigate , useParams } from "react-router-dom";
 import {useState} from "react";
 import { Context } from "../store/appContext";
 
-const FormularioNuevoContacto = () => {
 
-    const { actions } = useContext(Context);
+const EditContact = () => {
+
+    const { actions,store} = useContext(Context);
 
     const [newContact,setNewContact] = useState({
         name: "",
@@ -14,6 +15,8 @@ const FormularioNuevoContacto = () => {
         address: "",
         id: 0
     })
+
+    const {id} = useParams(); 
 
     const navigate = useNavigate();
 
@@ -25,15 +28,31 @@ const FormularioNuevoContacto = () => {
         })
     }
 
+
     const handleSubmit = () => {
-        actions.createContact(newContact);
+        actions.updateContact(newContact);
         navigate("/")
     }
 
-    return(
+    useEffect(() => { 
+        if (id){
+            const searchContact = store.contactList.find( item => item.id == id)
+            if (searchContact){
+                setNewContact({...newContact,
+                    name: searchContact.name, 
+                    phone: searchContact.phone, 
+                    email: searchContact.email,
+                    address: searchContact.address,
+                    id: searchContact.id
+                })
+            }
+        }
+    }, []);
+
+    return (
         <div className="container justify-content-center ">
 
-            <h1 className="text-center mb-3">Add a new contact</h1>
+            <h1 className="text-center mb-3">Edit your contact</h1>
 
             <div className="d-flex flex-column input-group mb-3 ">
                 <strong><p className="mb-1">Full Name</p></strong>
@@ -78,5 +97,4 @@ const FormularioNuevoContacto = () => {
     )
 }
 
-
-export default FormularioNuevoContacto;
+export default EditContact;
